@@ -23,6 +23,7 @@ namespace Tristram.Lobby.Network.ClientServices.Authentication
         private EntityId mAccount = new EntityId();
         private List<EntityId> mGameAccounts = new List<EntityId>();
 
+        public LogonResult(EErrorCode pErrorCode = EErrorCode.Success) { mErrorCode = (uint)pErrorCode; }
 
         public uint ErrorCode { get { return mErrorCode; } set { mErrorCode = value; } }
         public bool HasAccount { get { return mHasAccount; } set { mHasAccount = value; if (!mHasAccount) mAccount.Reset(); } }

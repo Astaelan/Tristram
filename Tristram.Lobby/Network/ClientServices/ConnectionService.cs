@@ -8,29 +8,23 @@ using Tristram.Shared.Network.Messages;
 
 namespace Tristram.Lobby.Network.ClientServices
 {
-    [ClientService("bnet.protocol.connection.ConnectionService", ClientServiceIds.ConnectionService)]
+    [ClientImportedService("bnet.protocol.connection.ConnectionService", ClientImportedServiceIds.ConnectionService)]
     public static class ConnectionService
     {
         private static class ConnectionMethodIds
         {
-            public const uint ConnectRequest = 1;
-            public const uint BindRequest = 2;
-
-            public static string ToString(uint pMethodId)
-            {
-                switch (pMethodId)
-                {
-                    case ConnectRequest: return "ConnectRequest";
-                    case BindRequest: return "BindRequest";
-                    default: return "Unknown";
-                }
-            }
+            public const uint Connect = 1;
+            public const uint Bind = 2;
+            public const uint Echo = 3;
+            public const uint ForceDisconnect = 4;
+            public const uint Null = 5;
+            public const uint Encrypt = 6;
+            public const uint RequestDisconnect = 7;
         }
 
-        [ClientServiceMethod(ClientServiceIds.ConnectionService, ConnectionMethodIds.ConnectRequest)]
+        [ClientImportedServiceMethod(ClientImportedServiceIds.ConnectionService, ConnectionMethodIds.Connect)]
         public static void OnConnectRequest(Client pClient, Header pHeader, MemoryStream pData)
         {
-            pClient.LogCall(ClientServiceIds.ToString(ClientServiceIds.ConnectionService), ConnectionMethodIds.ToString(ConnectionMethodIds.ConnectRequest));
             ConnectRequest connectRequest = new ConnectRequest();
             if (!connectRequest.Read(pData)) return;
 
@@ -51,7 +45,7 @@ namespace Tristram.Lobby.Network.ClientServices
             connectResponse.HasConnectionMeteringContentHandles = true;
             connectResponse.ConnectionMeteringContentHandles.ContentHandles.Add(contentHandle);
 
-            pClient.PermittedServices.Add(ClientServiceIds.AuthenticationService);
+            pClient.PermittedServices.Add(ClientImportedServiceIds.AuthenticationServer);
             //pClient.PermittedServices.Add(ClientServiceIds.ChallengeService);
             //pClient.PermittedServices.Add(ClientServiceIds.ChannelService);
             //pClient.PermittedServices.Add(ClientServiceIds.AchievementsService);
@@ -62,10 +56,9 @@ namespace Tristram.Lobby.Network.ClientServices
             pClient.SendResponse(pHeader.Token, 0, 0, null, response);
         }
 
-        [ClientServiceMethod(ClientServiceIds.ConnectionService, ConnectionMethodIds.BindRequest)]
+        [ClientImportedServiceMethod(ClientImportedServiceIds.ConnectionService, ConnectionMethodIds.Bind)]
         public static void OnBindRequest(Client pClient, Header pHeader, MemoryStream pData)
         {
-            pClient.LogCall(ClientServiceIds.ToString(ClientServiceIds.ConnectionService), ConnectionMethodIds.ToString(ConnectionMethodIds.BindRequest));
             BindRequest bindRequest = new BindRequest();
             if (!bindRequest.Read(pData)) return;
 
@@ -77,7 +70,7 @@ namespace Tristram.Lobby.Network.ClientServices
                 {
                     if (pClient.PermittedServices.Contains(serviceId))
                     {
-                        pClient.Log(ELogLevel.Debug, "Importing {0}", ClientServiceIds.ToString(serviceId));
+                        pClient.Log(ELogLevel.Debug, "Importing Service {0}", serviceId);
                         pClient.ImportedServices.Add(serviceId);
                         bindResponse.ImportedServiceIds.Add(serviceId);
                     }

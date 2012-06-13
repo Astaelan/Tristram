@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Tristram.Lobby.Network.ClientServices.Authentication;
 using Tristram.Shared;
 using Tristram.Shared.Network;
 using Tristram.Shared.Network.Messages;
@@ -20,8 +21,8 @@ namespace Tristram.Lobby.Network
         internal Client(Socket pSocket)
             : base(pSocket, Config.Instance.ClientBuffer)
         {
-            mPermittedServices.Add(ClientServiceIds.ConnectionService);
-            mImportedServices.Add(ClientServiceIds.ConnectionService);
+            mPermittedServices.Add(ClientImportedServiceIds.ConnectionService);
+            mImportedServices.Add(ClientImportedServiceIds.ConnectionService);
         }
 
         public void Log(ELogLevel pLogLevel, string pFormat, params object[] pArgs) { Logger.WriteLine(pLogLevel, "[Client:" + Host + "] " + pFormat, pArgs); }
@@ -86,7 +87,7 @@ namespace Tristram.Lobby.Network
                 Log(ELogLevel.Warn, "Unavailable Service: {0}", pHeader.ServiceId);
                 return;
             }
-            ClientServiceMethodAttribute clientServiceMethod = null;
+            ClientImportedServiceMethodAttribute clientServiceMethod = null;
             if (!Program.GetClientServiceMethod(pHeader.ServiceId, pHeader.MethodId, out clientServiceMethod))
             {
                 Log(ELogLevel.Warn, "Unknown Service Method: {0}.{1}", pHeader.ServiceId, pHeader.MethodId);
@@ -99,7 +100,7 @@ namespace Tristram.Lobby.Network
         public void SendResponse(uint pToken, ulong pObjectId, uint pStatus, List<ErrorInfo> pErrors, MemoryStream pData)
         {
             Header header = new Header();
-            header.ServiceId = ClientServiceIds.Response;
+            header.ServiceId = ClientImportedServiceIds.Response;
             header.Token = pToken;
             if (pObjectId != 0)
             {
@@ -163,6 +164,24 @@ namespace Tristram.Lobby.Network
 
             Log(ELogLevel.Debug, "Sent Message: {0}.{1} Token = {2}, {3} Bytes", header.ServiceId, header.MethodId, header.Token, header.Size);
             if (pData != null) Logger.Dump(pData.ToArray(), 0, (int)pData.Length);
+        }
+
+
+        private static class AuthenticationClientMethodIds
+        {
+            public const uint ModuleLoad = 1;
+            public const uint ModuleMessage = 2;
+            public const uint AccountSettings = 3;
+            public const uint ServerStateChange = 4;
+            public const uint LogonComplete = 5;
+            public const uint MemModuleLoad = 6;
+        }
+
+        public void SendAuthenticationClientLogonComplete(LogonResult pLogonResult)
+        {
+            MemoryStream response = new MemoryStream(64);
+            pLogonResult.Write(response);
+            SendRPC(ClientExportedServiceIds.AuthenticationClient, AuthenticationClientMethodIds.LogonComplete, 0, 0, response);
         }
     }
 }

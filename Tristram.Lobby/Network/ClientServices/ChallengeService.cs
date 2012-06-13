@@ -8,7 +8,7 @@ using Tristram.Shared.Network.Messages;
 
 namespace Tristram.Lobby.Network.ClientServices
 {
-    [ClientService("bnet.protocol.challenge.ChallengeService", ClientServiceIds.ChallengeService)]
+    [ClientImportedService("bnet.protocol.challenge.ChallengeService", ClientImportedServiceIds.ChallengeService)]
     public static class ChallengeService
     {
     }

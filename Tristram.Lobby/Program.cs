@@ -20,7 +20,7 @@ namespace Tristram.Lobby
         private static ConcurrentQueue<Client> sConnectingClients = new ConcurrentQueue<Client>();
         private static ConcurrentQueue<Client> sDisconnectingClients = new ConcurrentQueue<Client>();
         private static List<Client> sConnectedClients = new List<Client>();
-        private static Dictionary<uint, ClientServiceAttribute> sClientServices = new Dictionary<uint, ClientServiceAttribute>();
+        private static Dictionary<uint, ClientImportedServiceAttribute> sClientServices = new Dictionary<uint, ClientImportedServiceAttribute>();
         private static Dictionary<uint, uint> sClientServiceHashes = new Dictionary<uint, uint>();
 
         private static ConcurrentQueue<Action> sCallbacks = new ConcurrentQueue<Action>();
@@ -39,12 +39,12 @@ namespace Tristram.Lobby
             Config.Load();
             Logger.WriteLine(ELogLevel.Info, "Starting");
 
-            Reflector.FindAllClasses<ClientServiceAttribute>().ForEach(s => 
+            Reflector.FindAllClasses<ClientImportedServiceAttribute>().ForEach(s => 
             {
                 sClientServices[s.ServiceId] = s;
                 sClientServiceHashes[s.Hash] = s.ServiceId;
             });
-            Reflector.FindAllMethods<ClientServiceMethodAttribute, ClientServiceMethodDelegate>().ForEach(t =>
+            Reflector.FindAllMethods<ClientImportedServiceMethodAttribute, ClientServiceMethodDelegate>().ForEach(t =>
             {
                 t.Item1.Method = t.Item2;
                 if (sClientServices.ContainsKey(t.Item1.ServiceId))
@@ -52,9 +52,9 @@ namespace Tristram.Lobby
                     sClientServices[t.Item1.ServiceId].AddMethod(t.Item1.MethodId, t.Item1);
                 }
             });
-            foreach (KeyValuePair<uint, ClientServiceAttribute> kv in sClientServices)
+            foreach (KeyValuePair<uint, ClientImportedServiceAttribute> kv in sClientServices)
             {
-                Logger.WriteLine(ELogLevel.Info, "Loaded Client Service {0} - {1}, {2} Registered Methods", kv.Key, ClientServiceIds.ToString(kv.Key), kv.Value.MethodCount);
+                Logger.WriteLine(ELogLevel.Info, "Loaded Client Service {0}, {1} Registered Methods", kv.Key, kv.Value.MethodCount);
             }
 
             sClientListener.Bind(new IPEndPoint(IPAddress.Any, Config.Instance.ClientPort));
@@ -112,10 +112,10 @@ namespace Tristram.Lobby
         }
 
         internal static bool GetClientServiceId(uint pHash, out uint pServiceId) { return sClientServiceHashes.TryGetValue(pHash, out pServiceId); }
-        internal static bool GetClientServiceMethod(uint pServiceId, uint pMethodId, out ClientServiceMethodAttribute pMethod)
+        internal static bool GetClientServiceMethod(uint pServiceId, uint pMethodId, out ClientImportedServiceMethodAttribute pMethod)
         {
             pMethod = null;
-            ClientServiceAttribute service = null;
+            ClientImportedServiceAttribute service = null;
             if (!sClientServices.TryGetValue(pServiceId, out service)) return false;
             return service.TryGetMethod(pMethodId, out pMethod);
         }

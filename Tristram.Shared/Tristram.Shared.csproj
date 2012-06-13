@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,6 +45,7 @@
     <Compile Include="Network\ByteArraySegment.cs" />
     <Compile Include="Network\DateTimeExtensions.cs" />
     <Compile Include="Network\Descriptor.cs" />
+    <Compile Include="Network\EErrorCode.cs" />
     <Compile Include="Network\EMessageKeyType.cs" />
     <Compile Include="Network\IPackable.cs" />
     <Compile Include="Network\MemoryStreamExtensions.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="Network\Messages\Header.cs" />
     <Compile Include="Network\Messages\ObjectAddress.cs" />
     <Compile Include="Network\Messages\ProcessId.cs" />
+    <Compile Include="Network\SRP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\Reflector.cs" />
   </ItemGroup>

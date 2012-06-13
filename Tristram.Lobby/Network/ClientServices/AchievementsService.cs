@@ -8,7 +8,7 @@ using Tristram.Shared.Network.Messages;
 
 namespace Tristram.Lobby.Network.ClientServices
 {
-    [ClientService("bnet.protocol.achievements.AchievementsService", ClientServiceIds.AchievementsService)]
+    [ClientImportedService("bnet.protocol.achievements.AchievementsService", ClientImportedServiceIds.AchievementsService)]
     public static class AchievementsService
     {
     }

@@ -8,7 +8,7 @@ using Tristram.Shared.Network.Messages;
 
 namespace Tristram.Lobby.Network.ClientServices
 {
-    [ClientService("bnet.protocol.channel.Channel", ClientServiceIds.ChannelService)]
+    [ClientImportedService("bnet.protocol.channel.Channel", ClientImportedServiceIds.ChannelService)]
     public static class ChannelService
     {
     }

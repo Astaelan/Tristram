@@ -8,7 +8,7 @@ using Tristram.Shared.Network.Messages;
 
 namespace Tristram.Lobby.Network.ClientServices
 {
-    [ClientService("bnet.protocol.report.ReportService", ClientServiceIds.ReportService)]
+    [ClientImportedService("bnet.protocol.report.ReportService", ClientImportedServiceIds.ReportService)]
     public static class ReportService
     {
     }

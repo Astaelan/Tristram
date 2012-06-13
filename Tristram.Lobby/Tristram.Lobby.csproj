@@ -47,9 +47,10 @@
     <Compile Include="AccountCache.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Network\Client.cs" />
-    <Compile Include="Network\ClientServiceAttribute.cs" />
-    <Compile Include="Network\ClientServiceIds.cs" />
-    <Compile Include="Network\ClientServiceMethodAttribute.cs" />
+    <Compile Include="Network\ClientExportedServiceIds.cs" />
+    <Compile Include="Network\ClientImportedServiceAttribute.cs" />
+    <Compile Include="Network\ClientImportedServiceIds.cs" />
+    <Compile Include="Network\ClientImportedServiceMethodAttribute.cs" />
     <Compile Include="Network\ClientServices\AchievementsService.cs" />
     <Compile Include="Network\ClientServices\AuthenticationService.cs" />
     <Compile Include="Network\ClientServices\Authentication\LogonRequest.cs" />
